@@ -8,7 +8,7 @@ import { authenticatedProcedure } from "../middleware";
 
 export async function newSession(user: User) {
 	const key = crypto.randomBytes(64).toString("hex");
-	const keyHash = await hash(key, { salt: Buffer.from(user.email) });
+	const keyHash = crypto.createHash("sha256").update(key).digest("base64");
 
 	const expires = new Date();
 	expires.setDate(expires.getDate() + 7);

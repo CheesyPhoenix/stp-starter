@@ -3,8 +3,8 @@ import type { RequestEvent } from "@sveltejs/kit";
 import type { inferAsyncReturnType } from "@trpc/server";
 import { z } from "zod";
 import prisma from "../prisma";
-import { hash } from "argon2";
 import type { User } from "@prisma/client";
+import crypto from "node:crypto";
 
 const authCookieShape = z.object({
 	email: z.string().email(),
@@ -23,7 +23,10 @@ export async function createContext(event: RequestEvent) {
 
 	let user: User | null = null;
 	if (auth !== null) {
-		const keyHash = await hash(auth.key, { salt: Buffer.from(auth.email) });
+		const keyHash = crypto
+			.createHash("sha256")
+			.update(auth.key)
+			.digest("base64");
 		const session = await prisma.session.findUnique({
 			where: { keyHash },
 			include: { user: true }
