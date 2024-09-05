@@ -1,22 +1,15 @@
 <script lang="ts">
 	import "../app.css";
-	import {
-		AppRail,
-		AppRailAnchor,
-		AppBar,
-		Toast,
-		LightSwitch
-	} from "@skeletonlabs/skeleton";
+	import { AppBar, Toast, LightSwitch } from "@skeletonlabs/skeleton";
 	import { Icon } from "@steeze-ui/svelte-icon";
 	import {
 		Home,
 		Cog6Tooth,
 		UserCircle,
-		ShoppingBag,
 		Bars3,
 		Users,
-		Folder,
-		GlobeAlt
+		GlobeAlt,
+		User
 	} from "@steeze-ui/heroicons";
 	import { page } from "$app/stores";
 	import { slide } from "svelte/transition";
@@ -29,15 +22,36 @@
 		flip,
 		arrow
 	} from "@floating-ui/dom";
+	import NavLink from "./NavLink.svelte";
+	import NavButton from "./NavButton.svelte";
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	export let data;
+
+	let innerWidth: number;
+	let adminPanelOpen = false;
+	let adminPanelElement: HTMLElement;
+
+	$: {
+		if (adminPanelOpen && adminPanelElement) {
+			adminPanelElement.focus();
+		}
+	}
 </script>
 
-<div class="flex h-dvh flex-col">
-	<header class="z-10 shadow-2xl">
+<svelte:window bind:innerWidth />
+
+<a
+	href="#main"
+	class="variant-filled-primary btn fixed -top-10 left-1/2 z-30 m-auto -translate-x-1/2 p-2 shadow-2xl duration-300 focus:top-2"
+>
+	Skip to content
+</a>
+
+<div class="flex min-h-dvh w-screen flex-col">
+	<header class="z-20 shadow-2xl">
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<Icon src={GlobeAlt} class="h-8"></Icon>
@@ -58,34 +72,49 @@
 			</svelte:fragment>
 		</AppBar>
 	</header>
-	<div class="flex flex-grow overflow-hidden">
-		<div class="z-10 shadow-lg">
-			<AppRail>
-				<AppRailAnchor href="/" selected={$page.url.pathname === "/"}>
-					<div class="h-6">
-						<Icon src={Home}></Icon>
-					</div>
-					<span>Home</span>
-				</AppRailAnchor>
-				<svelte:fragment slot="trail">
-					{#if data.me?.isAdmin}
-						<AppRailAnchor
-							href="/admin"
-							selected={$page.url.pathname.startsWith("/admin")}
-							spacing=""
-						>
-							<div class="h-6">
-								<Icon src={Cog6Tooth}></Icon>
-							</div>
-						</AppRailAnchor>
-					{/if}
-				</svelte:fragment>
-			</AppRail>
+	<div class="flex flex-grow">
+		<div
+			class="bg-surface-100-800-token fixed bottom-0 left-0 z-20 block h-20 w-screen shadow-lg md:static md:h-auto md:w-20"
+		>
+			<nav
+				class="top-0 flex justify-between md:sticky md:flex-col md:justify-normal"
+			>
+				<NavLink
+					selected={!adminPanelOpen && $page.url.pathname === "/"}
+					iconSrc={Home}
+					visible
+					title="Home"
+					href="/"
+				></NavLink>
+				<NavLink
+					selected={!adminPanelOpen &&
+						$page.url.pathname.startsWith("/account")}
+					iconSrc={User}
+					visible
+					title="Account"
+					href="/account"
+				></NavLink>
+				<NavButton
+					selected={adminPanelOpen || $page.url.pathname.startsWith("/admin")}
+					iconSrc={Cog6Tooth}
+					visible={data.me?.isAdmin ?? false}
+					title="Admin"
+					on:click={() => (adminPanelOpen = true)}
+				></NavButton>
+			</nav>
 		</div>
-		{#if data.me?.isAdmin && $page.url.pathname.startsWith("/admin")}
+		{#if data.me?.isAdmin && adminPanelOpen}
 			<section
-				class="card w-72 overflow-y-auto p-4"
-				transition:slide={{ axis: "x" }}
+				tabindex="-1"
+				class="card fixed bottom-20 z-10 w-full overflow-y-auto p-4 md:bottom-auto md:left-20 md:h-full md:w-72"
+				transition:slide={{ axis: innerWidth < 1024 ? "y" : "x" }}
+				bind:this={adminPanelElement}
+				on:blur|capture={(e) => {
+					//@ts-ignore
+					if (!adminPanelElement.contains(e.relatedTarget)) {
+						adminPanelOpen = false;
+					}
+				}}
 			>
 				<nav class="list-nav">
 					<p class="pl-1 text-2xl font-bold">Admin</p>
@@ -114,11 +143,11 @@
 				</nav>
 			</section>
 		{/if}
-		<div class="flex-grow overflow-y-auto p-4">
+		<main id="main" class="w-full overflow-y-auto overflow-x-hidden p-4">
 			<slot></slot>
-		</div>
+		</main>
 	</div>
 </div>
 
 <Modal></Modal>
-<Toast position="br" />
+<Toast position="br" class="mb-20 pb-2 md:mb-0 md:pb-0" />

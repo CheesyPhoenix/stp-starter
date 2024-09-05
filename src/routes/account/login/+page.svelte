@@ -19,7 +19,7 @@
 	}
 </script>
 
-<i class="m-auto block w-max">
+<i class="m-auto block max-w-max">
 	Log in with the demo user by using the email <u>demo@stp-starter.cpnx.eu</u> with
 	any password
 </i>
