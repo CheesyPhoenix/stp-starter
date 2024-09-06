@@ -3,8 +3,8 @@ import { hash, verify } from "argon2";
 import { t } from "../t";
 import { z } from "zod";
 import crypto from "node:crypto";
-import type { User } from "@prisma/client";
 import { authenticatedProcedure } from "../middleware";
+import type { User } from "@prisma/client";
 
 export async function newSession(user: User) {
 	const key = crypto.randomBytes(64).toString("hex");
@@ -26,6 +26,7 @@ export const accountRouter = t.router({
 			if (input.email === "demo@stp-starter.cpnx.eu") {
 				const user = await prisma.user.upsert({
 					create: {
+						name: "John Demo",
 						email: "demo@stp-starter.cpnx.eu",
 						passwordHash: "demo",
 						isAdmin: true
@@ -100,6 +101,7 @@ export const accountRouter = t.router({
 			const passwordHash = await hash(input.password);
 			const user = await prisma.user.create({
 				data: {
+					name: input.email,
 					email: input.email,
 					passwordHash
 				}
@@ -124,7 +126,23 @@ export const accountRouter = t.router({
 		return {
 			email: ctx.user.email,
 			id: ctx.user.id,
-			isAdmin: ctx.user.isAdmin
+			isAdmin: ctx.user.isAdmin,
+			name: ctx.user.name
 		};
-	})
+	}),
+	sessions: authenticatedProcedure.query(async ({ ctx }) => {
+		return await prisma.session.findMany({
+			where: { userId: ctx.user.id, expires: { gt: new Date() } },
+			select: { id: true, expires: true, created: true }
+		});
+	}),
+	updateProfile: authenticatedProcedure
+		.input(z.object({ name: z.string(), email: z.string().email() }))
+		.mutation(async ({ input, ctx }) => {
+			return await prisma.user.update({
+				where: { id: ctx.user.id },
+				data: { email: input.email, name: input.name },
+				select: { id: true, email: true, name: true, isAdmin: true }
+			});
+		})
 });

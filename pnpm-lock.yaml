@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: 5.18.0
-        version: 5.18.0(prisma@5.19.1)
+        specifier: ^5.19.1
+        version: 5.19.1(prisma@5.19.1)
       '@sveltejs/adapter-node':
         specifier: ^5.2.2
         version: 5.2.2(@sveltejs/kit@2.5.25(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.3)))(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.3)))
@@ -42,6 +42,9 @@ importers:
       '@steeze-ui/heroicons':
         specifier: ^2.4.0
         version: 2.4.0
+      '@steeze-ui/simple-icons':
+        specifier: ^1.9.0
+        version: 1.9.0
       '@steeze-ui/svelte-icon':
         specifier: ^1.5.0
         version: 1.5.0(svelte@4.2.19)
@@ -342,8 +345,8 @@ packages:
   '@polka/url@1.0.0-next.25':
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
 
-  '@prisma/client@5.18.0':
-    resolution: {integrity: sha512-BWivkLh+af1kqC89zCJYkHsRcyWsM8/JHpsDMM76DjP3ZdEquJhXa4IeX+HkWPnwJ5FanxEJFZZDTWiDs/Kvyw==}
+  '@prisma/client@5.19.1':
+    resolution: {integrity: sha512-x30GFguInsgt+4z5I4WbkZP2CGpotJMUXy+Gl/aaUjHn2o1DnLYNTA+q9XdYmAQZM8fIIkvUiA2NpgosM3fneg==}
     engines: {node: '>=16.13'}
     peerDependencies:
       prisma: '*'
@@ -494,6 +497,9 @@ packages:
 
   '@steeze-ui/heroicons@2.4.0':
     resolution: {integrity: sha512-gxOytXYV/lQiGxkZQC+CP5IWCa+d/vscRKn4JfZXgF8MZEzg9wfl1tTi/GOr3Eg93YkhlhNDwTIGWjhMaEwmvw==}
+
+  '@steeze-ui/simple-icons@1.9.0':
+    resolution: {integrity: sha512-E0Yy9AOMqrt0GSJCetk2a+1GavpLfM3xZkHjWXH+cCTV4Pl6rIy+5XcdbHqD4x1P2KuaHPcX1X7k3RtgOl7Sgg==}
 
   '@steeze-ui/svelte-icon@1.5.0':
     resolution: {integrity: sha512-Y0S7Qk2kO6byzOlD5SQGbOF2ZaKXJgfTkH78QUPcq579wiWMQJ5H14zL4XwtsPJ0DfkoL5qa3WaIdYkWb9A6AA==}
@@ -1934,7 +1940,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.25': {}
 
-  '@prisma/client@5.18.0(prisma@5.19.1)':
+  '@prisma/client@5.19.1(prisma@5.19.1)':
     optionalDependencies:
       prisma: 5.19.1
 
@@ -2053,6 +2059,8 @@ snapshots:
       tailwindcss: 3.4.10
 
   '@steeze-ui/heroicons@2.4.0': {}
+
+  '@steeze-ui/simple-icons@1.9.0': {}
 
   '@steeze-ui/svelte-icon@1.5.0(svelte@4.2.19)':
     dependencies:

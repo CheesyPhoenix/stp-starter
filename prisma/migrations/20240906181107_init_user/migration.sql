@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
@@ -14,6 +15,7 @@ CREATE TABLE "Session" (
     "userId" INTEGER NOT NULL,
     "keyHash" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
+    "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );

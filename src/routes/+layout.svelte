@@ -143,7 +143,7 @@
 				</nav>
 			</section>
 		{/if}
-		<main id="main" class="w-full overflow-y-auto overflow-x-hidden p-4">
+		<main id="main" class="w-full overflow-y-auto overflow-x-hidden p-8">
 			<slot></slot>
 		</main>
 	</div>

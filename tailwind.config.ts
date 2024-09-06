@@ -20,7 +20,7 @@ const config = {
 	},
 	plugins: [
 		// 4. Append the Skeleton plugin (after other plugins)
-		skeleton({ themes: { preset: [{ name: "rocket", enhancements: true }] } })
+		skeleton({ themes: { preset: [{ name: "wintry", enhancements: true }] } })
 	]
 } satisfies Config;
 

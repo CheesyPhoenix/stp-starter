@@ -28,7 +28,7 @@ export async function createContext(event: RequestEvent) {
 			.update(auth.key)
 			.digest("base64");
 		const session = await prisma.session.findUnique({
-			where: { keyHash },
+			where: { keyHash, expires: { gt: new Date() } },
 			include: { user: true }
 		});
 		user = session?.user ?? null;
