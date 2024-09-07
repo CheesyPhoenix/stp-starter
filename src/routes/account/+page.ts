@@ -5,7 +5,11 @@ import { trpc } from "$lib/trpc/client";
 export const load: PageLoad = async (event) => {
 	const { me } = await event.parent();
 
-	if (me === null) redirect(307, "/account/login");
+	if (me === null)
+		redirect(
+			307,
+			`/account/login?callbackPath=${encodeURIComponent(event.url.pathname)}`
+		);
 
 	return {
 		me,

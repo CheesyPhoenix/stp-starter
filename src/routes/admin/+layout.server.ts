@@ -10,7 +10,11 @@ export const load: LayoutServerLoad = async (event) => {
 		.createCallerFactory(router)(await createContext(event))
 		.account.me();
 
-	if (me === null) redirect(307, "/account/login");
+	if (me === null)
+		redirect(
+			307,
+			`/account/login?callbackPath=${encodeURIComponent(event.url.pathname)}`
+		);
 
 	return { me };
 };

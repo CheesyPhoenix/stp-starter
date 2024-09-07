@@ -6,7 +6,10 @@ import { createTRPCClient, type TRPCClientInit } from "trpc-sveltekit";
 
 let browserClient: ReturnType<typeof createTRPCClient<Router>>;
 
-function wrapper(client: typeof browserClient) {
+function wrapper(
+	client: typeof browserClient,
+	init?: TRPCClientInit & { url: { pathname: string } }
+) {
 	return async <T>(callback: (client: typeof browserClient) => T) => {
 		try {
 			return await callback(client);
@@ -15,16 +18,19 @@ function wrapper(client: typeof browserClient) {
 				error instanceof TRPCClientError &&
 				error.data.code === "UNAUTHORIZED"
 			) {
-				redirect(307, "/account/login");
+				redirect(
+					307,
+					`/account/login?callbackPath=${encodeURIComponent(init?.url.pathname ?? "/account")}`
+				); // TODO: callback path
 			}
 			throw error;
 		}
 	};
 }
 
-export function trpc(init?: TRPCClientInit) {
+export function trpc(init?: TRPCClientInit & { url: { pathname: string } }) {
 	const isBrowser = typeof window !== "undefined";
-	if (isBrowser && browserClient) return wrapper(browserClient);
+	if (isBrowser && browserClient) return wrapper(browserClient, init);
 	const client = createTRPCClient<Router>({
 		links: [
 			loggerLink({
@@ -40,5 +46,5 @@ export function trpc(init?: TRPCClientInit) {
 		]
 	});
 	if (isBrowser) browserClient = client;
-	return wrapper(client);
+	return wrapper(client, init);
 }
