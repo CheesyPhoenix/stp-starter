@@ -1,13 +1,15 @@
 FROM node:22-slim AS base
-COPY . /app
 WORKDIR /app
 RUN apt-get update
 RUN apt-get install -y openssl
 
 FROM base as pnpm
 RUN npm i -g pnpm
+COPY . /app
 
 FROM pnpm AS prod-deps
+COPY package.json /app
+COPY pnpm-lock.yaml /app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 FROM pnpm AS build
@@ -18,7 +20,6 @@ RUN pnpm run build
 FROM base
 RUN apt-get update
 RUN apt-get install -y openssl
-WORKDIR /app
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app/build
 COPY --from=build /app/node_modules/@prisma/client /app/node_modules/@prisma/client
