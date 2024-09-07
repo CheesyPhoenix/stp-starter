@@ -37,11 +37,11 @@ export const accountRouter = t.router({
 
 				const { key, expires } = await newSession(user);
 
-				ctx.cookies.set("auth", JSON.stringify({ email: user.email, key }), {
+				ctx.cookies.set("auth", key, {
 					path: "/",
 					httpOnly: true,
 					secure: true,
-					sameSite: "strict",
+					sameSite: "lax",
 					expires: expires
 				});
 				return { success: true } as const;
@@ -69,11 +69,11 @@ export const accountRouter = t.router({
 
 			const { key, expires } = await newSession(user);
 
-			ctx.cookies.set("auth", JSON.stringify({ email: user.email, key }), {
+			ctx.cookies.set("auth", key, {
 				path: "/",
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				expires: expires
 			});
 			return { success: true } as const;
@@ -109,11 +109,11 @@ export const accountRouter = t.router({
 
 			const { key, expires } = await newSession(user);
 
-			ctx.cookies.set("auth", JSON.stringify({ email: user.email, key }), {
+			ctx.cookies.set("auth", key, {
 				path: "/",
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				expires: expires
 			});
 			return { success: true } as const;

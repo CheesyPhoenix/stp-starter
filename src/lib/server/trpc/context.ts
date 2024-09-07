@@ -1,32 +1,15 @@
 // lib/trpc/context.ts
 import type { RequestEvent } from "@sveltejs/kit";
-import type { inferAsyncReturnType } from "@trpc/server";
-import { z } from "zod";
 import prisma from "../prisma";
 import type { User } from "@prisma/client";
 import crypto from "node:crypto";
 
-const authCookieShape = z.object({
-	email: z.string().email(),
-	key: z.string()
-});
-
 export async function createContext(event: RequestEvent) {
-	const authCookie = event.cookies.get("auth");
-	let auth: null | z.infer<typeof authCookieShape> = null;
-	if (authCookie !== undefined) {
-		const authParse = authCookieShape.safeParse(JSON.parse(authCookie));
-		if (authParse.success) {
-			auth = authParse.data;
-		}
-	}
+	const auth = event.cookies.get("auth");
 
 	let user: User | null = null;
-	if (auth !== null) {
-		const keyHash = crypto
-			.createHash("sha256")
-			.update(auth.key)
-			.digest("base64");
+	if (auth !== undefined) {
+		const keyHash = crypto.createHash("sha256").update(auth).digest("base64");
 		const session = await prisma.session.findUnique({
 			where: { keyHash, expires: { gt: new Date() } },
 			include: { user: true }
@@ -40,4 +23,4 @@ export async function createContext(event: RequestEvent) {
 	};
 }
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;
