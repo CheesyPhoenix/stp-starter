@@ -24,6 +24,7 @@
 	} from "@floating-ui/dom";
 	import NavLink from "./NavLink.svelte";
 	import NavButton from "./NavButton.svelte";
+	import { tick } from "svelte";
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -32,13 +33,8 @@
 
 	let innerWidth: number;
 	let adminPanelOpen = false;
-	let adminPanelElement: HTMLElement;
-
-	$: {
-		if (adminPanelOpen && adminPanelElement) {
-			adminPanelElement.focus();
-		}
-	}
+	let adminPanelElement: HTMLElement | null = null;
+	let adminButtonElement: HTMLButtonElement | null;
 </script>
 
 <svelte:window bind:innerWidth />
@@ -99,19 +95,52 @@
 					iconSrc={Cog6Tooth}
 					visible={data.me?.isAdmin ?? false}
 					title="Admin"
-					on:click={() => (adminPanelOpen = true)}
+					on:click={async () => {
+						adminPanelOpen = !adminPanelOpen;
+						await tick();
+						if (adminPanelElement) adminPanelElement.focus();
+					}}
+					on:blur={(e) => {
+						if (
+							!adminButtonElement?.contains(
+								//@ts-ignore
+								e.relatedTarget
+							) &&
+							!adminPanelElement?.contains(
+								//@ts-ignore
+								e.relatedTarget
+							)
+						) {
+							adminPanelOpen = false;
+						}
+					}}
+					bind:buttonElement={adminButtonElement}
 				></NavButton>
 			</nav>
 		</div>
-		{#if data.me?.isAdmin && adminPanelOpen}
+		{#if adminPanelOpen}
 			<section
 				tabindex="-1"
 				class="card fixed bottom-20 z-10 w-full overflow-y-auto p-4 md:bottom-auto md:left-20 md:h-full md:w-72"
-				transition:slide={{ axis: innerWidth < 1024 ? "y" : "x" }}
+				transition:slide={{
+					axis:
+						innerWidth <
+						768 /* This is the pixel width of the "md:" tailwind class */
+							? "y"
+							: "x"
+				}}
 				bind:this={adminPanelElement}
 				on:blur|capture={(e) => {
-					//@ts-ignore
-					if (!adminPanelElement.contains(e.relatedTarget)) {
+					if (
+						!adminButtonElement?.contains(
+							//@ts-ignore
+							e.relatedTarget
+						) &&
+						!adminPanelElement?.contains(
+							//@ts-ignore
+							e.relatedTarget
+						)
+					) {
 						adminPanelOpen = false;
 					}
 				}}

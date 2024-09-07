@@ -7,6 +7,7 @@
 	export let visible: boolean;
 	export let iconSrc: IconSource;
 	export let title: string;
+	export let buttonElement: HTMLButtonElement | null = null;
 
 	let animVisible = visible;
 	let showEl = visible;
@@ -38,7 +39,9 @@
 
 {#if showEl}
 	<button
+		bind:this={buttonElement}
 		on:click
+		on:blur|capture
 		class="flex basis-0 flex-col items-center justify-center duration-300 hover:bg-primary-hover-token md:flex-grow-0 md:basis-auto
         {selected ? 'bg-primary-active-token ' : ' '}
         {animVisible
